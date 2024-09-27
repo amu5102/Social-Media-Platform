@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Posts</h1>
+<form action="{{ url_for('create_post') }}" method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    {{ form.content.label }} {{ form.content() }}<br>
+    {{ form.image.label }} {{ form.image() }}<br>
+    {{ form.submit() }}
+</form>
+<div>
+    {% for post in posts %}
+        <div>
+            <p>{{ post.content }}</p>
+            {% if post.image_url %}
+                <img src="{{ url_for('static', filename='uploads/' + post.image_url) }}" alt="Post Image">
+            {% endif %}
+            <a href="{{ url_for('like', post_id=post.id) }}">Like</a>
+            <span>{{ post.likes.count() }} likes</span>
+            <form action="{{ url_for('comment', post_id=post.id) }}" method="POST">
+                <textarea name="content" placeholder="Add a comment"></textarea>
+                <button type="submit">Comment</button>
+            </form>
+            <div>
+                {% for comment in post.comments %}
+                    <p>{{ comment.content }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
